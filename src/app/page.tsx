@@ -7,9 +7,16 @@ import {
   useSession,
   SignOutButton,
   SignedOut,
+  useOrganization,
 } from "@clerk/nextjs";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 export default function Home() {
+  const {organization} = useOrganization();
+  console.log(organization?.id);
+  const file = useQuery(api.files.getFiles);
+  const createFile = useMutation(api.files.createFile);
   const session = useSession();
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -23,6 +30,18 @@ export default function Home() {
           <Button>Sign In</Button>
         </SignInButton>
       </SignedOut>
+
+      {file?.map((file) => {
+        return <div key={file._id}>{file.name}</div>;
+      })}
+
+      <Button
+        onClick={() => {
+          createFile({ name: "Hello World" });
+        }}
+      >
+        Create a File
+      </Button>
     </main>
   );
 }
