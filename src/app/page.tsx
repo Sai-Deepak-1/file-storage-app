@@ -8,14 +8,20 @@ import {
   SignOutButton,
   SignedOut,
   useOrganization,
+  useUser,
 } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 
 export default function Home() {
-  const {organization} = useOrganization();
-  console.log(organization?.id);
-  const file = useQuery(api.files.getFiles);
+  const organization = useOrganization();
+  const user = useUser();
+  let orgId: string | undefined = undefined;
+  if (organization.isLoaded && user.isLoaded) {
+    orgId = organization.organization?.id ?? user.user?.id;
+  }
+  console.log(organization);
+  const file = useQuery(api.files.getFiles, orgId ? { orgId } : "skip");
   const createFile = useMutation(api.files.createFile);
   const session = useSession();
   return (
@@ -37,7 +43,8 @@ export default function Home() {
 
       <Button
         onClick={() => {
-          createFile({ name: "Hello World" });
+          if (!orgId) return;
+          createFile({ name: "Hello World", orgId });
         }}
       >
         Create a File
