@@ -1,8 +1,10 @@
-export default {
+const clerkConfig = {
   providers: [
     {
-      domain: "https://vocal-vervet-79.clerk.accounts.dev",
+      domain: process.env.CLERK_DOMAIN,
       applicationID: "convex",
     },
   ],
 };
+
+export default clerkConfig;

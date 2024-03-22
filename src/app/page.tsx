@@ -16,27 +16,16 @@ import { api } from "../../convex/_generated/api";
 export default function Home() {
   const organization = useOrganization();
   const user = useUser();
+  // console.log(user.user);
   let orgId: string | undefined = undefined;
   if (organization.isLoaded && user.isLoaded) {
     orgId = organization.organization?.id ?? user.user?.id;
   }
-  console.log(organization);
   const file = useQuery(api.files.getFiles, orgId ? { orgId } : "skip");
   const createFile = useMutation(api.files.createFile);
   const session = useSession();
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <SignedIn>
-        <SignOutButton>
-          <Button>Sign Out</Button>
-        </SignOutButton>
-      </SignedIn>
-      <SignedOut>
-        <SignInButton mode="modal">
-          <Button>Sign In</Button>
-        </SignInButton>
-      </SignedOut>
-
       {file?.map((file) => {
         return <div key={file._id}>{file.name}</div>;
       })}
